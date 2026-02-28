@@ -1,0 +1,25 @@
+# 忽略日志文件（重点解决大文件问题）
+*.log
+*.txt
+lock/log/
+lock/log/log_file/
+
+# 忽略 Python 缓存文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 忽略测试报告
+allure-report/
+test_case/report/
+
+# 忽略虚拟环境
+venv/
+env/
+*.env
+
+# 忽略 IDE 配置文件（如果用 VS Code/PyCharm）
+.idea/
+.vscode/
+*.swp
