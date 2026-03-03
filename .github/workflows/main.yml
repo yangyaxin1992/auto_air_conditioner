@@ -1,1 +1,71 @@
+name: 智能暖通接口自动化测试
 
+# 触发条件：推送到main分支，或向main分支提PR时执行
+on: # 触发条件
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # 可选：每天凌晨2点（UTC）定时执行，对应北京时间10点
+  # schedule:
+  #  - cron: '0 2 * * *'
+
+jobs: # 总模块
+  test: # 任务模块
+    runs-on: ubuntu-latest # 指定任务运行的操作系统环境
+
+    steps: # 任务步骤
+      # 1. 拉去代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 设置Python环境（根据项目版本调整）
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip' # 缓存pip依赖，加速构建
+
+      # 3. 安装系统依赖(如果有，如curl、net-tools等）
+      - name: Install System dependencies
+        run:
+          sudo apt-get update
+          sudo apt-get install -y curl
+
+      # 4. 安装Python依赖
+      - name: Install Python dependencies
+        run:
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 5. 运行pytest测试（核心步骤）
+      - name: Run air conditioner API tests
+        run:
+          # 执行 test_case下的所有测试用例
+          pytest test_case/ -v \
+            --html=report/test_report.html \
+            --self-contained-html \
+            --cov=. \
+            --cov-report=term
+        env:
+          # 从Github Secrets 读取测试环境配置
+          TEST_ENV: ${{ }}
+          AIR_CONDITIONER_BASE_URL: ${{ }}
+          # 如果有token或其他敏感配置，也通过Secrets 传入
+          # API_TOKEN: ${{ }}
+
+      # 6. 上传测试报告（无论成功失败都上传）
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: report/
+        if: always() # 即使测试失败，也上传报告
+
+      # 7. 可选：上传覆盖率报告（如果需要）
+#      - name: Upload coverage report
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: coverage-report
+#          path: htmlcov/
+#        if: always()

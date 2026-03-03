@@ -4,6 +4,9 @@
 lock/log/
 lock/log/log_file/
 
+# 再强制不忽略 requirements.txt（否定规则，必须写在上面规则之后）
+!requirements.txt
+
 # 忽略 Python 缓存文件
 __pycache__/
 *.pyc
