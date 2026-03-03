@@ -20,10 +20,10 @@ jobs: # 总模块
         uses: actions/checkout@v4
 
       # 2. 设置Python环境（根据项目版本调整）
-      - name: Set up Python 3.9
+      - name: Set up Python 3.8
         uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
+        with: # 给这个 Action 传参数
+          python-version: '3.8'
           cache: 'pip' # 缓存pip依赖，加速构建
 
       # 3. 安装系统依赖(如果有，如curl、net-tools等）
@@ -47,12 +47,12 @@ jobs: # 总模块
             --self-contained-html \
             --cov=. \
             --cov-report=term
-        env:
-          # 从Github Secrets 读取测试环境配置
-          TEST_ENV: ${{ }}
-          AIR_CONDITIONER_BASE_URL: ${{ }}
-          # 如果有token或其他敏感配置，也通过Secrets 传入
-          # API_TOKEN: ${{ }}
+#        env:
+#          # 从Github Secrets 读取测试环境配置
+#          TEST_ENV: ${{ secrets.TEST_ENV }}
+#          AIR_CONDITIONER_BASE_URL: ${{ secrets.AIR_CONDITIONER_BASE_URL }}
+#          # 如果有token或其他敏感配置，也通过Secrets 传入
+#          # API_TOKEN: ${{ }}
 
       # 6. 上传测试报告（无论成功失败都上传）
       - name: Upload test report
